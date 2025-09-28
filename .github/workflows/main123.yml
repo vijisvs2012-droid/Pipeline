@@ -1,0 +1,9 @@
+npm install
+
+yarn install
+
+- uses: actions/setup-node@v3
+  with:
+    node-version: 16
+    # remove cache line if you don’t use a lock file
+    # cache: 'npm'
