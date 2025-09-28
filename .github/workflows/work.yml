@@ -1,19 +1,37 @@
-name: CI Workflow
+# Trigger workflow on push to main branch or pull request events
 on:
- push:
-   branches:
-     - main
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
- build:
-   runs-on: ubuntu-latest
-   steps:
-     - name: Checkout Code
-       uses: actions/checkout@v4
-     - name: Set Up Node.js
-       uses: actions/setup-node@v4
-       with:
-         node-version: '16'
-     - name: Install Dependencies
-       run: npm install
-     - name: Run Tests
-       run: npm test
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x] # Test against multiple Node versions
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Setup Node.js environment
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Run tests
+      - name: Run tests
+        run: npm test
